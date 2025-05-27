@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Security.Cryptography;
 using System.Text;
-using BankingAppCSharpSimple.Models;
+using BankingApp.Models;
 using Npgsql;
 
-namespace BankingAppCSharpSimple
+namespace BankingApp
 {
     public class DatabaseManager
     {

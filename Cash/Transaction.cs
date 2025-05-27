@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BankingAppCSharpSimple.Models
+namespace BankingApp.Models
 {
     public class Transaction
     {

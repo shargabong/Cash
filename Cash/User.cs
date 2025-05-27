@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BankingAppCSharpSimple.Models
+namespace BankingApp.Models
 {
     public class User
     {
