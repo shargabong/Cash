@@ -10,15 +10,15 @@
 
 ## Диаграммы
 ### 1. Class Diagram (`из чего состоит`)
-![image](![1](https://github.com/user-attachments/assets/d15a7906-b5a3-44c4-996a-722104bccdcb)
+![image](https://github.com/user-attachments/assets/d15a7906-b5a3-44c4-996a-722104bccdcb)
 )
 
 ### 2. Sequence Diagram (`как работает`)
-![image](![2](https://github.com/user-attachments/assets/30c995c4-4d6c-4c21-ad28-207f5f1dcd02)
+![image]((https://github.com/user-attachments/assets/30c995c4-4d6c-4c21-ad28-207f5f1dcd02)
 )
 
 ### 3. Use Case (`что можно сделать`)
-![image](![3](https://github.com/user-attachments/assets/888aa137-3a85-4a4e-a4b7-7a61ec4987f3)
+![image]((https://github.com/user-attachments/assets/888aa137-3a85-4a4e-a4b7-7a61ec4987f3)
 )
 
 
