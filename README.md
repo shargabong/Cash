@@ -21,6 +21,7 @@
 ![image](https://github.com/user-attachments/assets/888aa137-3a85-4a4e-a4b7-7a61ec4987f3)
 )
 
+---
 
 # 🏦 Структура Базы Данных
 
