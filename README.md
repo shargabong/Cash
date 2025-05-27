@@ -14,11 +14,11 @@
 )
 
 ### 2. Sequence Diagram (`как работает`)
-![image]((https://github.com/user-attachments/assets/30c995c4-4d6c-4c21-ad28-207f5f1dcd02)
+![image](https://github.com/user-attachments/assets/30c995c4-4d6c-4c21-ad28-207f5f1dcd02)
 )
 
 ### 3. Use Case (`что можно сделать`)
-![image]((https://github.com/user-attachments/assets/888aa137-3a85-4a4e-a4b7-7a61ec4987f3)
+![image](https://github.com/user-attachments/assets/888aa137-3a85-4a4e-a4b7-7a61ec4987f3)
 )
 
 
