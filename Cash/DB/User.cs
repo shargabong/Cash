@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BankingApp.Models
+namespace Cash.DB
 {
     public class User
     {

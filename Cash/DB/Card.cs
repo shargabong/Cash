@@ -1,4 +1,4 @@
-﻿namespace BankingAppCSharp.Models
+﻿namespace Cash.DB
 {
     public class Card
     {

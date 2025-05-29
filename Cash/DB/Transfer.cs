@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BankingAppCSharp.Models
+namespace Cash.DB
 {
     public class Transfer
     {

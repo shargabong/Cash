@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BankingApp.Models
+namespace Cash.DB
 {
     public class Account
     {

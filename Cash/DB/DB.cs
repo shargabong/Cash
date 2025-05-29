@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using BankingApp.Models;
 using Npgsql;
 
-namespace BankingApp
+namespace Cash.DB
 {
     public class DatabaseManager
     {
-        private readonly string _connectionString = "Host=localhost;Database=ATM;Username=postgres;Password=zxc";
+        private readonly string _connectionString = "Host=localhost;Database=ATM;Username=postgres;Password=123";
 
         private NpgsqlConnection GetConnection()
         {
@@ -84,7 +80,7 @@ namespace BankingApp
                         int rowsAffected = cmd.ExecuteNonQuery();
                         return rowsAffected > 0;
                     }
-                    catch (Npgsql.PostgresException ex) when (ex.SqlState == "23505")
+                    catch (PostgresException ex) when (ex.SqlState == "23505")
                     {
                         Console.WriteLine("Ошибка: Пользователь с таким логином уже существует.");
                         return false;
@@ -182,6 +178,91 @@ namespace BankingApp
                     }
                 }
             }
+        }
+
+        internal void CreateUser(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void CreateAccount(int userId, string currency)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal Account GetAccountByNumber(string accountNumber)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void CreateCard(int accountId, string expiry, string cvv, string pinHash)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal Card GetCardByAccountId(int accountId)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void SetCardBlockStatus(int cardId, bool v)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal List<CurrencyRate> GetAllCurrencyRates()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal CurrencyRate GetCurrencyRate(string from, string to)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void UpsertCurrencyRate(string from, string to, decimal rate)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool Deposit(int accountId, decimal amount, string description)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool Withdraw(int accountId, decimal amount, string description)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal List<Transaction> GetTransactionsByAccountId(int accountId)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool TransferFunds(int fromAccountId, int toAccountId, decimal amount)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal List<Transfer> GetTransfersByAccountId(int accountId)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void RecordLoginAttempt(string login, bool v)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void SetUserBlockStatus(int userId, bool v)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal List<User> GetAllUsers()
+        {
+            throw new NotImplementedException();
         }
     }
 }

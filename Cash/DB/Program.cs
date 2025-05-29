@@ -1,8 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
-using BankingApp.Models;
 
-namespace BankingApp
+namespace Cash.DB
 {
     class Program
     {
@@ -164,8 +163,8 @@ namespace BankingApp
 
         static void Main(string[] args)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-            Console.InputEncoding = System.Text.Encoding.UTF8;
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.InputEncoding = Encoding.UTF8;
             Console.WriteLine("Добро пожаловать!");
 
             try
