@@ -161,6 +161,97 @@ namespace Cash.DB
             }
         }
 
+        static void HandleWithdrawFunds()
+        {
+            if (_currentUser == null) return;
+            HandleViewMyAccounts();
+            Console.Write("Введите ID счета для снятия: ");
+            if (!int.TryParse(Console.ReadLine(), out int accountId))
+            {
+                Console.WriteLine("Неверный ID счета.");
+                return;
+            }
+
+            decimal amount = GetDecimalInput("Сумма снятия: ");
+            var account = _dbManager.GetAccountsByUserId(_currentUser.UserId).FirstOrDefault(a => a.AccountId == accountId);
+            if (account == null)
+            {
+                Console.WriteLine("Счет не найден или не принадлежит вам.");
+                return;
+            }
+
+            if (account.Balance < amount)
+            {
+                Console.WriteLine("Недостаточно средств на счете.");
+                return;
+            }
+
+            if (_dbManager.UpdateAccountBalance(accountId, account.Balance - amount))
+            {
+                _dbManager.CreateTransaction(accountId, -amount, "withdraw", "Консольное снятие");
+                Console.WriteLine("Снятие выполнено успешно.");
+            }
+            else
+            {
+                Console.WriteLine("Ошибка при снятии средств.");
+            }
+        }
+
+        static void HandleTransferBetweenAccounts()
+        {
+            if (_currentUser == null) return;
+            HandleViewMyAccounts();
+            Console.Write("Введите ID счета-отправителя: ");
+            if (!int.TryParse(Console.ReadLine(), out int fromAccountId))
+            {
+                Console.WriteLine("Неверный ID.");
+                return;
+            }
+
+            var fromAccount = _dbManager.GetAccountsByUserId(_currentUser.UserId).FirstOrDefault(a => a.AccountId == fromAccountId);
+            if (fromAccount == null)
+            {
+                Console.WriteLine("Счет не найден или не принадлежит вам.");
+                return;
+            }
+
+            Console.Write("Введите ID счета-получателя: ");
+            if (!int.TryParse(Console.ReadLine(), out int toAccountId))
+            {
+                Console.WriteLine("Неверный ID.");
+                return;
+            }
+
+            if (fromAccountId == toAccountId)
+            {
+                Console.WriteLine("Нельзя перевести на тот же счет.");
+                return;
+            }
+
+            decimal amount = GetDecimalInput("Сумма перевода: ");
+            if (fromAccount.Balance < amount)
+            {
+                Console.WriteLine("Недостаточно средств.");
+                return;
+            }
+
+            var toAccount = _dbManager.GetAccountById(toAccountId);
+            if (toAccount == null)
+            {
+                Console.WriteLine("Счет получателя не найден.");
+                return;
+            }
+
+            if (_dbManager.TransferFunds(fromAccountId, toAccountId, amount))
+            {
+                Console.WriteLine("Перевод выполнен успешно.");
+            }
+            else
+            {
+                Console.WriteLine("Ошибка при выполнении перевода.");
+            }
+        }
+
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -208,6 +299,8 @@ namespace Cash.DB
                     Console.WriteLine($"Меню пользователя ({_currentUser.Login}, роль: {_currentUser.Role}):");
                     Console.WriteLine("1. Просмотр моих счетов");
                     Console.WriteLine("2. Внести средства (Депозит)");
+                    Console.WriteLine("3. Снять деньги");
+                    Console.WriteLine("4. Перевод между счетами");
                     if (_currentUser.Role == "admin")
                     {
                         Console.WriteLine("A1. Просмотр всех пользователей (Админ)");
@@ -220,6 +313,8 @@ namespace Cash.DB
                     {
                         case "1": HandleViewMyAccounts(); break;
                         case "2": HandleDepositFunds(); break;
+                        case "3": HandleWithdrawFunds(); break;
+                        case "4": HandleTransferBetweenAccounts(); break;
                         case "A1":
                             if (_currentUser.Role == "admin") { Console.WriteLine("Функция просмотра всех пользователей (TODO)"); }
                             else { Console.WriteLine("Доступ запрещен."); }

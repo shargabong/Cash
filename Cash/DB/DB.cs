@@ -264,5 +264,10 @@ namespace Cash.DB
         {
             throw new NotImplementedException();
         }
+
+        internal object GetAccountById(int toAccountId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
