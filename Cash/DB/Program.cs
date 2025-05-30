@@ -82,7 +82,7 @@ namespace Cash.DB
             if (_dbManager.CreateUser(login, password, fullName, "client", currency))
             {
                 Console.WriteLine($"Пользователь '{login}' успешно зарегистрирован!");
-                Console.WriteLine($"Счет в валюте {currency} создан автоматически.");
+                Console.WriteLine($"Счет в валюте {currency} создан.");
             }
         }
 
@@ -104,7 +104,7 @@ namespace Cash.DB
                     _currentUser = user;
                     Console.WriteLine($"Добро пожаловать, {user.FullName}!");
 
-                    // Показываем счета пользователя после входа
+
                     var accounts = _dbManager.GetAccountsByUserId(user.UserId);
                     if (accounts != null && accounts.Any())
                     {

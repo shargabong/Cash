@@ -76,7 +76,6 @@ namespace Cash.DB
                 {
                     try
                     {
-                        // Создаем пользователя
                         string userQuery = @"
                             INSERT INTO users (login, password_hash, full_name, role)
                             VALUES (@login, @password_hash, @full_name, @role)
@@ -93,7 +92,6 @@ namespace Cash.DB
                             userId = (int)cmd.ExecuteScalar();
                         }
 
-                        // Создаем счет по умолчанию
                         string accountNumber = GenerateAccountNumber(currency);
                         string accountQuery = @"
                             INSERT INTO accounts (user_id, account_number, balance, currency)
@@ -243,7 +241,6 @@ namespace Cash.DB
             }
         }
 
-        // Остальные методы остаются без изменений
         internal void CreateUser(User user)
         {
             throw new NotImplementedException();
