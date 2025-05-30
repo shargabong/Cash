@@ -77,10 +77,12 @@ namespace Cash.DB
             string password = GetPasswordInput("Пароль (мин 6 символов): ");
             if (password.Length < 6) { Console.WriteLine("Пароль слишком короткий."); return; }
             string fullName = GetStringInput("ФИО: ", 3, 100);
+            string currency = GetStringInput("Валюта счета (RUB, USD, EUR): ", 3, 3).ToUpper();
 
-            if (_dbManager.CreateUser(login, password, fullName))
+            if (_dbManager.CreateUser(login, password, fullName, "client", currency))
             {
                 Console.WriteLine($"Пользователь '{login}' успешно зарегистрирован!");
+                Console.WriteLine($"Счет в валюте {currency} создан автоматически.");
             }
         }
 
@@ -101,6 +103,17 @@ namespace Cash.DB
                 {
                     _currentUser = user;
                     Console.WriteLine($"Добро пожаловать, {user.FullName}!");
+
+                    // Показываем счета пользователя после входа
+                    var accounts = _dbManager.GetAccountsByUserId(user.UserId);
+                    if (accounts != null && accounts.Any())
+                    {
+                        Console.WriteLine("\nВаши счета:");
+                        foreach (var acc in accounts)
+                        {
+                            Console.WriteLine($"- {acc.AccountNumber}: {acc.Balance} {acc.Currency}");
+                        }
+                    }
                 }
             }
             else

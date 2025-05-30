@@ -6,7 +6,7 @@ namespace Cash.DB
 {
     public class DatabaseManager
     {
-        private readonly string _connectionString = "Host=localhost;Database=ATM;Username=postgres;Password=123";
+        private readonly string _connectionString = "Host=localhost;Database=ATM;Username=postgres;Password=zxc";
 
         private NpgsqlConnection GetConnection()
         {
@@ -25,6 +25,14 @@ namespace Cash.DB
                 }
                 return builder.ToString();
             }
+        }
+
+        public string GenerateAccountNumber(string currency)
+        {
+            string currencyCode = currency.ToUpper();
+            string datePart = DateTime.Now.ToString("yyMMdd");
+            string randomPart = new Random().Next(100000, 999999).ToString();
+            return $"{currencyCode}{datePart}{randomPart}";
         }
 
         public User GetUserByLogin(string login)
@@ -58,35 +66,59 @@ namespace Cash.DB
             return user;
         }
 
-        public bool CreateUser(string login, string password, string fullName, string role = "client")
+        public bool CreateUser(string login, string password, string fullName, string role = "client", string currency = "RUB")
         {
             string passwordHash = HashPassword(password);
             using (var conn = GetConnection())
             {
                 conn.Open();
-                string query = @"
-                    INSERT INTO users (login, password_hash, full_name, role)
-                    VALUES (@login, @password_hash, @full_name, @role)
-                    ON CONFLICT (login) DO NOTHING;
-                ";
-                using (var cmd = new NpgsqlCommand(query, conn))
+                using (var transaction = conn.BeginTransaction())
                 {
-                    cmd.Parameters.AddWithValue("@login", login);
-                    cmd.Parameters.AddWithValue("@password_hash", passwordHash);
-                    cmd.Parameters.AddWithValue("@full_name", fullName);
-                    cmd.Parameters.AddWithValue("@role", role);
                     try
                     {
-                        int rowsAffected = cmd.ExecuteNonQuery();
-                        return rowsAffected > 0;
+                        // Создаем пользователя
+                        string userQuery = @"
+                            INSERT INTO users (login, password_hash, full_name, role)
+                            VALUES (@login, @password_hash, @full_name, @role)
+                            RETURNING user_id;";
+
+                        int userId;
+                        using (var cmd = new NpgsqlCommand(userQuery, conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@login", login);
+                            cmd.Parameters.AddWithValue("@password_hash", passwordHash);
+                            cmd.Parameters.AddWithValue("@full_name", fullName);
+                            cmd.Parameters.AddWithValue("@role", role);
+
+                            userId = (int)cmd.ExecuteScalar();
+                        }
+
+                        // Создаем счет по умолчанию
+                        string accountNumber = GenerateAccountNumber(currency);
+                        string accountQuery = @"
+                            INSERT INTO accounts (user_id, account_number, balance, currency)
+                            VALUES (@user_id, @account_number, 0, @currency);";
+
+                        using (var cmd = new NpgsqlCommand(accountQuery, conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@user_id", userId);
+                            cmd.Parameters.AddWithValue("@account_number", accountNumber);
+                            cmd.Parameters.AddWithValue("@currency", currency);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                        return true;
                     }
                     catch (PostgresException ex) when (ex.SqlState == "23505")
                     {
+                        transaction.Rollback();
                         Console.WriteLine("Ошибка: Пользователь с таким логином уже существует.");
                         return false;
                     }
                     catch (Exception ex)
                     {
+                        transaction.Rollback();
                         Console.WriteLine($"Ошибка создания пользователя: {ex.Message}");
                         return false;
                     }
@@ -152,6 +184,7 @@ namespace Cash.DB
                 }
             }
         }
+
         public int CreateTransaction(int accountId, decimal amount, string transactionType, string description = "")
         {
             using (var conn = GetConnection())
@@ -180,12 +213,38 @@ namespace Cash.DB
             }
         }
 
-        internal void CreateUser(User user)
+        public bool CreateAccount(int userId, string currency = "RUB")
         {
-            throw new NotImplementedException();
+            using (var conn = GetConnection())
+            {
+                conn.Open();
+                string accountNumber = GenerateAccountNumber(currency);
+                string query = @"
+                    INSERT INTO accounts (user_id, account_number, balance, currency)
+                    VALUES (@user_id, @account_number, 0, @currency);";
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@user_id", userId);
+                    cmd.Parameters.AddWithValue("@account_number", accountNumber);
+                    cmd.Parameters.AddWithValue("@currency", currency);
+
+                    try
+                    {
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        return rowsAffected > 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Ошибка создания счета: {ex.Message}");
+                        return false;
+                    }
+                }
+            }
         }
 
-        internal void CreateAccount(int userId, string currency)
+        // Остальные методы остаются без изменений
+        internal void CreateUser(User user)
         {
             throw new NotImplementedException();
         }
